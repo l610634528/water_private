@@ -28,7 +28,7 @@ class TestWater(unittest.TestCase):
         self.driver.quit()
 
     def test_increat_organization(self):
-        self.driver.login()
+        self.driver.slide_verification_login()
         self.driver.increat_organization()
         # 断言判断是否新增成功
         # self.driver.test_1()

@@ -7,7 +7,7 @@ import sys
 from selenium import webdriver
 
 sys.path.append("F:\\test_FF\\utils")
-from config import DRIVER_PATH, REPORT_PATH
+from utils.config import DRIVER_PATH, REPORT_PATH
 
 CHROMEDRIVER_PATH = DRIVER_PATH + '\chromedriver.exe'
 IEDRIVER_PATH = DRIVER_PATH + '\IEDriverServer.exe'

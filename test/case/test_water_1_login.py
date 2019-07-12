@@ -28,17 +28,18 @@ from utils.file_reader import ExcelReader
 from HTMLTestRunner import HTMLTestRunner
 from test.page.water_main_page import WaterMainPage
 
+
 class TestWater(unittest.TestCase):
     URL = Config().get('URL')
 
     def setUp(self):
-        self.driver = WaterMainPage(browser_type='chrome').get(self.URL, maximize_window=False)
+        self.driver = WaterMainPage(browser_type='chrome').get(self.URL, maximize_window=True)
 
     def tearDown(self):
         self.driver.quit()
 
     def test_water_login(self):
-        self.driver.login()
+        self.driver.slide_verification_login()
 
 
 if __name__ == '__main__':

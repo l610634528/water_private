@@ -3,7 +3,7 @@
 # import sys
 # sys.path.append("..\\common")
 # from page import Page
-#
+# (..\\test_FF\\utils)
 # sys.path.append("F:\\test_FF\\utils")
 # from file_reader import ExcelReader
 # from generator import *
@@ -14,8 +14,24 @@ from test.common.page import Page
 from utils.file_reader import ExcelReader
 from utils.generator import *
 from utils.config import Config, DATA_PATH
+from selenium.webdriver.support import expected_conditions as EC
 
-water_service_code_1 = '7gfOxckv'
+from PIL import Image
+from io import BytesIO
+
+# from pip._vendor import requests
+import requests
+from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
+from time import sleep
+import urllib.request
+import cv2
+import numpy as np
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+
+
+# water_service_code_1 = '7gfOxckv'
 
 
 class WaterMainPage(Page):
@@ -25,16 +41,180 @@ class WaterMainPage(Page):
     loc_password = (By.XPATH, "//input[@placeholder='请输入密码']")
     loc_button = (By.XPATH, "//button[@class='el-button submit-info el-button--default']")
 
+    # 登录功能
     def element(self, account, password):
-        """登录功能"""
+        self.find_element(*self.loc_account).clear()
         self.find_element(*self.loc_account).send_keys(account)
+        self.find_element(*self.loc_password).clear()
         self.find_element(*self.loc_password).send_keys(password)
-        self.find_element(*self.loc_button).click()
+        # self.find_element(*self.loc_button).click()
 
+    # 滑动按键
+    slide_pic = (By.XPATH, "//i[@class='fa fa-long-arrow-right common-icon right-arrow']")
+    back_img = (By.CLASS_NAME, "back-img")
+    front_img = (By.CLASS_NAME, "front-img")
+
+    def get_pic(self):
+        wait = WebDriverWait(self.get_driver(), 20, 0.5)
+        sleep(2)
+        article = self.find_element(*self.slide_pic)
+        ActionChains(self.driver).move_to_element(article).perform()  # 把鼠标放在滑动键上
+        target = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'back-img')))
+        template = wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'front-img')))
+        # target = self.find_element(*self.back_img)  # 背景图
+        # template = self.find_element(*self.front_img)  # 滑动图
+        target_link = target.get_attribute('src')
+        template_link = template.get_attribute('src')
+        target_img = Image.open(BytesIO(requests.get(target_link).content))
+        template_img = Image.open(BytesIO(requests.get(template_link).content))
+        target_img.save('target.jpg')
+        template_img.save('template.png')
+        local_img = Image.open('target.jpg')
+        size_loc = local_img.size
+        self.zoom = 400 / int(size_loc[0])
+
+    def match(self, target, template):
+        img_rgb = cv2.imread(target)
+        img_gray = cv2.cvtColor(img_rgb, cv2.COLOR_BGR2GRAY)
+        template = cv2.imread(template, 0)
+        run = 1
+        w, h = template.shape[::-1]
+        print(w, h)
+        res = cv2.matchTemplate(img_gray, template, cv2.TM_CCOEFF_NORMED)
+        run = 1
+
+        # 使用二分法查找阈值的精确值
+        L = 0
+        R = 1
+        while run < 20:
+            run += 1
+            threshold = (R + L) / 2
+            print(threshold)
+            if threshold < 0:
+                print('Error')
+                return None
+            loc = np.where(res >= threshold)
+            print(len(loc[1]))
+            if len(loc[1]) > 1:
+                L += (R - L) / 2
+            elif len(loc[1]) == 1:
+                print('目标区域起点x坐标为：%d' % loc[1][0])
+                break
+            elif len(loc[1]) < 1:
+                R -= (R - L) / 2
+        return loc[1][0]
+
+    def get_tracks(self, distance):
+        print(distance)
+        distance += 20
+        v = 0
+        t = 0.2
+        forward_tracks = []
+        current = 0
+        mid = distance * 3 / 5  # 减速阀值
+        while current < distance:
+            if current < mid:
+                a = 2  # 加速度为+2
+            else:
+                a = -3  # 加速度-3
+            s = v * t + 0.5 * a * (t ** 2)
+            v = v + a * t
+            current += s
+            forward_tracks.append(round(s))
+
+        back_tracks = [-3, -3, -2, -2, -2, -2, -2, -1, -1, -1]
+        return {'forward_tracks': forward_tracks, 'back_tracks': back_tracks}
+
+    def crack_slider(self, tracks):
+        wait = WebDriverWait(self.get_driver(), 20, 0.5)
+        # sleep(1)
+        # slider = self.find_element(*self.slide_pic)
+        slider = wait.until(
+            EC.element_to_be_clickable((By.XPATH, '//i[@class="fa fa-long-arrow-right common-icon right-arrow"]')))
+        ActionChains(self.driver).click_and_hold(slider).perform()
+
+        for track in tracks['forward_tracks']:
+            ActionChains(self.driver).move_by_offset(xoffset=track, yoffset=0).perform()
+
+        sleep(0.5)
+        # for back_tracks in tracks['back_tracks']:
+        #     ActionChains(self.driver).move_by_offset(xoffset=back_tracks, yoffset=0).perform()
+
+        ActionChains(self.driver).move_by_offset(xoffset=-4, yoffset=0).perform()
+        ActionChains(self.driver).move_by_offset(xoffset=4, yoffset=0).perform()
+        sleep(0.5)
+        ActionChains(self.driver).release().perform()
+
+    def slide_verification_login(self):
+        self.login()
+        target = 'target.jpg'
+        template = 'template.png'
+        self.get_pic()
+        distance = self.match(target, template)
+        tracks = self.get_tracks((distance + 6.5) * (self.zoom))  # 对位移的缩放计算
+        self.crack_slider(tracks)
+        sleep(1)
+        self.fail_refresh_success_login()
+
+    # 滑动失败提示
+    fail_fresh = "//div[@class='el-form-item__error']"
+
+    # 滑动失败，页面刷新重新操作
+    def fail_refresh_success_login(self):
+        flag = self.isElementExist(self.fail_fresh)
+        if flag:
+            self.get_driver().refresh()
+            self.slide_verification_login()
+        else:
+            self.find_element(*self.loc_button).click()
+            sleep(1)
+
+    # def isElementExist(self, element):
+    #     flag = True
+    #     try:
+    #         self.find_element(By.XPATH, element)
+    #         return flag
+    #     except:
+    #         flag = False
+    #         return flag
+
+    # 全部权限_帐号密码输入
     def login(self):
         datas = ExcelReader(self.excel).data
         for d in datas:
             self.element(d['account'], d['password'])
+            self.implicitly_wait_time()
+            self.wait_time()
+
+    # 市场部权限登录
+    def login_marketing_account(self):
+        datas = ExcelReader(self.excel).data
+        for d in datas:
+            self.element(d['marketing_account'], d['password'])
+            self.implicitly_wait_time()
+            self.wait_time()
+
+    # 综合科初审权限登录
+    def login_general_audit(self):
+        datas = ExcelReader(self.excel).data
+        for d in datas:
+            self.element(d['general_audit'], d['password'])
+            self.implicitly_wait_time()
+            self.wait_time()
+
+    # 综合科复审权限登录
+    def login_general_review(self):
+        datas = ExcelReader(self.excel).data
+        for d in datas:
+            self.element(d['general_review'], d['password'])
+            self.implicitly_wait_time()
+            self.wait_time()
+
+    # 总监确认权限登录
+    def login_director_to_confirm(self):
+        datas = ExcelReader(self.excel).data
+        for d in datas:
+            self.element(d['director_to_confirm'], d['password'])
             self.implicitly_wait_time()
             self.wait_time()
 
@@ -180,9 +360,9 @@ class WaterMainPage(Page):
     work_service_code_texts = []
     work_service_code_exist = (By.XPATH, "//div[@class='mt-20']//div[.='" + water_service_code + "']")  # 指定服务码
     work_service_human = (By.XPATH, "//span[@class='el-radio__inner']")  # 选择服务专员
-    work_service_submit_button = (By.XPATH, "//div[@class='mt-20']//button[.='确 定']") # 服务专员选择确定
+    work_service_submit_button = (By.XPATH, "//div[@class='mt-20']//button[.='确 定']")  # 服务专员选择确定
 
-    # 工单管理，指派
+    # 工单管理，派单，现在没有服务码，可舍弃该方法
     def work_order_designate(self):
         self.wait_time()
         self.find_element(*self.work_order).click()
@@ -198,8 +378,8 @@ class WaterMainPage(Page):
 
         # 判断该订单是否存在
         try:
-            self.assertIn(water_service_code_1, self.work_service_code_texts,
-                          "%s 新增订单服务码失败！" % self.water_real_code)
+            self.assertIn(self.water_real_code, self.work_service_code_texts,
+                          "%s 新增订单服务码成功！" % self.water_real_code)
         except Exception as e:
             print(format(e))
 
@@ -215,3 +395,67 @@ class WaterMainPage(Page):
         self.find_element(*self.work_service_human).click()
         # if self.find_element(*self.work_service_code_exist) == self.water_service_code:
         #     self.find_element()
+
+    # 1.补贴申请，流程 (拥有全部权限all)市场部审核
+    subsidy_service_code_texts = []  # 空列表
+    subsidy_wealth_management = (By.XPATH, "//*[@id='app']/div/section/section/aside/div/ul/div[3]/li/div/div")  # 财富管理
+    subsidy_audit = (By.XPATH, "//*[@id='app']/div/section/section/aside/div/ul/div[3]/li/ul/li[10]")  # 补贴审核
+    subsidy_service_code_elements = (By.XPATH, "//div[@class='el-table__header-wrapper']//div[@class='cell']")  # 服务卡号列表
+    subsidy_agree_button = (By.XPATH, "//div[@class='el-table__fixed-body-wrapper']//span[.='同意']")  # 同意补贴申请(列表第一列同意）
+    subsidy_agree_window = (
+        By.XPATH, "//div[@class='el-message-box__btns']//button[normalize-space(.)='确定']")  # 列表同意后，窗口同意确认
+    subsidy_to_audit = (By.XPATH, "//div[@class='personnel-box']//a[.='已审核']")  # 已审核列表
+    subsidy_service_audit_code_elements = (By.XPATH, "//thead[@class='has-gutter']//div[@class='cell']")  # 列表数据
+    subsidy_service_audit_codes_elements_texts = []
+
+    # 补贴审核——同意,待审核通过后在已审核列表比对
+    def subsidy_operation(self):
+        self.wait_time()
+        self.find_element(*self.subsidy_wealth_management).click()
+        self.wait_time()
+        self.find_element(*self.subsidy_audit).click()
+        self.wait_time()
+        subsidy_service_codes_elements = self.find_elements(*self.subsidy_service_code_elements)
+        for subsidy_service_codes_element in subsidy_service_codes_elements:
+            self.subsidy_service_code_texts.append(subsidy_service_codes_element)
+        subsidy_code_card = self.subsidy_service_code_texts[5]  # 服务卡号
+        print(subsidy_code_card)
+        subsidy_service_number = self.subsidy_service_code_texts.index(subsidy_code_card)
+        subsidy_service_code_location = int((subsidy_service_number + 1) / 22) + 1  # 定位列表的行数
+        # 列表同意的位置
+        if subsidy_service_number <= 22:
+            subsidy_service_code_real_location = (By.XPATH,
+                                                  "//div[1]/div/section/section/section/main/div[3]/div/div[4]/div/div/div[1]/div[4]/div[2]/"
+                                                  "table/tbody/tr/td[22]/div/div/span[1]")
+            self.find_element(*subsidy_service_code_real_location).click()
+        else:
+            subsidy_service_code_real_location = (By.XPATH,
+                                                  "//div[1]/div/section/section/section/main/div[3]/div/div[4]/div/div/div[1]/div[4]/div[2]/table/tbody/tr[" + str(
+                                                      subsidy_service_code_location) + "]/td[22]/div/div/span[1]")
+            self.find_element(*subsidy_service_code_real_location).click()
+        self.find_element(*self.subsidy_agree_window).click()
+        self.wait_time()
+        self.find_element(*self.subsidy_to_audit).click()  # 进入已审核列表
+        self.wait_time()
+        subsidy_service_audit_codes_elements = self.find_elements(*self.subsidy_service_code_elements)
+        for subsidy_service_audit_code in subsidy_service_audit_codes_elements:
+            self.subsidy_service_audit_codes_elements_texts.append(subsidy_service_audit_code)
+        try:
+            self.assertIn(subsidy_code_card, self.subsidy_service_audit_codes_elements_texts,
+                          "服务卡号为%s 的补贴申请同意!" % subsidy_code_card)
+        except Exception as e:
+            print(format(e))
+
+    department_to_audit_codes_element_text = []
+    department_to_audit_elements = (By.XPATH, "//div[@class='mt-20']//div[@class='cell']")  # 列表数据
+
+    # 2.全部权限综合科初审
+    def department_to_audit(self):
+        self.wait_time()
+        self.find_element(*self.subsidy_wealth_management).click()
+        self.wait_time()
+        self.find_element(*self.subsidy_audit).click()
+        self.wait_time()
+        department_to_audit_codes_elements = self.find_element(*self.department_to_audit_elements)
+        for department_to_audit_element in department_to_audit_codes_elements:
+            self.department_to_audit_codes_element_text.append(department_to_audit_element)

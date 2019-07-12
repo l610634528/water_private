@@ -4,7 +4,8 @@
 # import sys
 # sys.path.append("..\\common")
 # from page import Page
-# sys.path.append("F:\\test_FF\\utils")
+# F:\\test_FF\\utils
+# sys.path.append("..\\test_FF\\utils")
 # from config import Config
 # from water_main_page import WaterMainPage
 # from selenium.webdriver.common.by import By
@@ -28,7 +29,7 @@ class TestWater(unittest.TestCase):
         self.driver.quit()
 
     def test_work_order(self):
-        self.driver.login()
+        self.driver.slide_verification_login()
         self.driver.work_order_designate()
 
 if __name__ == '__main__':

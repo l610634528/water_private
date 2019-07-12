@@ -28,7 +28,7 @@ class TestWater(unittest.TestCase):
         self.driver.quit()
 
     def test_2_increat_order(self):
-        self.driver.login()
+        self.driver.slide_verification_login()
         self.driver.increat_order()
         element_service_code = self.driver.find_element(By.XPATH,
                                                         "//div[1]/div/section/section/section/main/div[3]/div/div[2]/div[1]/div[3]/table/tbody/tr[1]/td[5]/div").text

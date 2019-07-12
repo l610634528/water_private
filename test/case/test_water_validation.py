@@ -2,19 +2,20 @@
 
 """ a test module """
 from random import random
-
-from selenium import webdriver
-from time import sleep
 from selenium.common.exceptions import TimeoutException
+import re
+from selenium.webdriver.support import expected_conditions as EC
+from PIL import Image
+from io import BytesIO
+# from pip._vendor import requests
+import requests
+from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
+from time import sleep
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
-from PIL import Image
-import requests
-from io import BytesIO
-import re
-import geetest
+
 
 # driver = webdriver.Chrome()
 # driver.get("http://test.waterhome.zcabc.com/#/login")
