@@ -221,12 +221,12 @@ class WaterMainPage(Page):
 
     # 新增水工单
     loc_increat = (By.XPATH, "//div[@class='phone-box']//button[.='新增']")
-    loc_service_code = (By.XPATH, "//div[@class='el-dialog__body']/form/div[2]/div/div/input")  # 服务码
-    loc_service_time = (By.XPATH, "//div[@class='el-dialog__body']/form/div[3]/div/div/input")  # 预约时间
-    loc_data_time = (By.XPATH, "//table[@class='el-date-table']/tbody/tr[6]/td[7]/div/span")  # 选择时间
-    loc_Appointments = (By.XPATH, "//div[@class='el-dialog__body']/form/div[4]/div/div/input")
-    loc_Appointments_telephone = (By.XPATH, "//div[@class='el-dialog__body']/form/div[5]/div/div[1]/input")
-    loc_human_type = (By.XPATH, "//div[@class='el-dialog__body']/form/div[6]/div/div/div[1]/input")
+    # loc_service_code = (By.XPATH, "//div[@class='el-dialog__body']/form/div[2]/div/div/input")  # 服务码
+    loc_service_time = (By.XPATH, "//div[@class='el-dialog__body']/form/div[2]/div/div/input")  # 预约时间
+    loc_data_time = (By.XPATH, "//table[@class='el-date-table']/tbody/tr[6]/td[5]/div/span")  # 选择时间
+    loc_Appointments = (By.XPATH, "//input[@placeholder='请填写预约人']")  # 预约人
+    loc_Appointments_telephone = (By.XPATH, "//input[placeholder='请填写预约人电话']")  # 预约人电话
+    loc_human_type = (By.XPATH, "//input[@placeholder='请选择预约人类型']")  # 预约人类型
     loc_human_type_owner = (By.XPATH, "//div[4]/div[1]/div[1]/ul/li[1]")  # 业主
     loc_human_type_plumber = (By.XPATH, "//div[4]/div[1]/div[1]/ul/li[2]")  # 水电工
     loc_human_type_section = (By.XPATH, "//div[4]/div[1]/div[1]/ul/li[3]")  # 工长
@@ -252,8 +252,8 @@ class WaterMainPage(Page):
     def increat_order(self):
         self.wait_time(5)
         self.find_element(*self.loc_increat).click()
-        self.wait_time()
-        self.find_element(*self.loc_service_code).send_keys(self.water_real_code)
+        # self.wait_time()
+        # self.find_element(*self.loc_service_code).send_keys(self.water_real_code)
         self.wait_time()
         self.find_element(*self.loc_service_time).click()
         self.wait_time()
@@ -348,7 +348,7 @@ class WaterMainPage(Page):
         self.find_element(*self.organ_city_choose).click()
         self.wait_time()
         self.find_element(*self.organ_area_choose).click()
-        self.wait_time(20)
+        self.wait_time(15)
         self.find_element(*self.organ_submit_true).click()
         self.wait_time()
         self.find_element(*self.organ_Bounced_to_confirm).click()
