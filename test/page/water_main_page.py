@@ -163,12 +163,12 @@ class WaterMainPage(Page):
     def fail_refresh_success_login(self):
         flag = self.isElementExist(self.fail_fresh)
         if flag:
+            print("失败刷新页面！")
             self.get_driver().refresh()
             self.slide_verification_login()
         else:
             self.find_element(*self.loc_button).click()
             sleep(1)
-            print("失败刷新页面！")
 
     # def isElementExist(self, element):
     #     flag = True
