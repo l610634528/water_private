@@ -168,6 +168,7 @@ class WaterMainPage(Page):
         else:
             self.find_element(*self.loc_button).click()
             sleep(1)
+            print("失败刷新页面！")
 
     # def isElementExist(self, element):
     #     flag = True
