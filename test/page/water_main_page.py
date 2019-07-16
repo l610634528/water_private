@@ -170,14 +170,14 @@ class WaterMainPage(Page):
             self.find_element(*self.loc_button).click()
             sleep(1)
 
-    # def isElementExist(self, element):
-    #     flag = True
-    #     try:
-    #         self.find_element(By.XPATH, element)
-    #         return flag
-    #     except:
-    #         flag = False
-    #         return flag
+    def isElementExist(self, element):
+        flag = True
+        try:
+            self.find_element(By.XPATH, element)
+            return flag
+        except:
+            flag = False
+            return flag
 
     # 全部权限_帐号密码输入
     def login(self):
@@ -239,7 +239,7 @@ class WaterMainPage(Page):
     loc_province = (By.XPATH, "//div[5]/ul/li[1]/span")  # 北京市
     loc_city = (By.XPATH, "//div[5]/ul[2]/li[1]/span")  # 北京市
     loc_district = (By.XPATH, "//div[5]/ul[3]/li[1]")  # 东城区
-    loc_detailed_address = (By.XPATH, "//div[@class='el-dialog__body']/form/div[10]/div/div/input")  # 详细地址
+    loc_detailed_address = (By.XPATH, "//input[@placeholder='请填写详细地址']")  # 详细地址
     loc_choose_org = (By.XPATH, "//div[@class='el-dialog__body']/form/div[11]/div/div/div/input")  # 选择机构
     loc_choose_org_NO1 = (By.XPATH, "//div[6]/div[1]/div[1]/ul/li")  # 选择第一个机构
     loc_note = (By.XPATH, "textarea.el-textarea__inner")  # 备注

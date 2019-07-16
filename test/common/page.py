@@ -43,7 +43,7 @@ class Page(Browser):
         flag = True
         browser = self.driver
         try:
-            browser.find_element_(element)
+            browser.find_element(element)
             return flag
         except:
             flag = False
