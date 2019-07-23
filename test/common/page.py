@@ -88,7 +88,7 @@ class Page(Browser):
     # 元素存在则执行用例xpath
     def implement_xpath(self, locator):
         if self.is_visible(locator):
-            self.bus_wait()
+            self.wait_time()
             self.find_element(By.XPATH, locator).click()
         else:
             print("未找到元素")
@@ -99,6 +99,8 @@ class Page(Browser):
             self.find_element(By.CSS_SELECTOR, locator).click()
         else:
             print("未找到元素")
+
+
 
 # if __name__ == '__mian__':
 #     h = Page()

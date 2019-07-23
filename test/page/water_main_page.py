@@ -31,9 +31,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 
 
-# water_service_code_1 = '7gfOxckv'
-
-
 class WaterMainPage(Page):
     URL = Config().get('URL')
     excel = DATA_PATH + '/water.xlsx'
@@ -89,16 +86,16 @@ class WaterMainPage(Page):
         while run < 20:
             run += 1
             threshold = (R + L) / 2
-            print(threshold)
+            # print(threshold)
             if threshold < 0:
                 print('Error')
                 return None
             loc = np.where(res >= threshold)
-            print(len(loc[1]))
+            # print(len(loc[1]))
             if len(loc[1]) > 1:
                 L += (R - L) / 2
             elif len(loc[1]) == 1:
-                print('目标区域起点x坐标为：%d' % loc[1][0])
+                # print('目标区域起点x坐标为：%d' % loc[1][0])
                 break
             elif len(loc[1]) < 1:
                 R -= (R - L) / 2
@@ -195,6 +192,27 @@ class WaterMainPage(Page):
             self.implicitly_wait_time()
             self.wait_time()
 
+    def slide_verification_marketing_login(self):
+        self.login_marketing_account()
+        target = 'target.jpg'
+        template = 'template.png'
+        self.get_pic()
+        distance = self.match(target, template)
+        tracks = self.get_tracks((distance + 6.5) * (self.zoom))  # 对位移的缩放计算
+        self.crack_slider(tracks)
+        sleep(1)
+        self.fail_refresh_success_marketing_login()
+
+    def fail_refresh_success_marketing_login(self):
+        flag = self.isElementExist(self.fail_fresh)
+        if flag:
+            print("失败刷新页面！")
+            self.get_driver().refresh()
+            self.slide_verification_marketing_login()
+        else:
+            self.find_element(*self.loc_button).click()
+            sleep(1)
+
     # 综合科初审权限登录
     def login_general_audit(self):
         datas = ExcelReader(self.excel).data
@@ -203,21 +221,84 @@ class WaterMainPage(Page):
             self.implicitly_wait_time()
             self.wait_time()
 
+    def slide_verification_general_login(self):
+        self.login_general_audit()
+        target = 'target.jpg'
+        template = 'template.png'
+        self.get_pic()
+        distance = self.match(target, template)
+        tracks = self.get_tracks((distance + 6.5) * (self.zoom))  # 对位移的缩放计算
+        self.crack_slider(tracks)
+        sleep(1)
+        self.fail_refresh_success_general_login()
+
+    def fail_refresh_success_general_login(self):
+        flag = self.isElementExist(self.fail_fresh)
+        if flag:
+            print("失败刷新页面！")
+            self.get_driver().refresh()
+            self.slide_verification_general_login()
+        else:
+            self.find_element(*self.loc_button).click()
+            sleep(1)
+
     # 综合科复审权限登录
-    def login_general_review(self):
+    def login_general_review_login(self):
         datas = ExcelReader(self.excel).data
         for d in datas:
             self.element(d['general_review'], d['password'])
             self.implicitly_wait_time()
             self.wait_time()
 
+    def slide_verification_general_review_login(self):
+        self.login_general_review_login()
+        target = 'target.jpg'
+        template = 'template.png'
+        self.get_pic()
+        distance = self.match(target, template)
+        tracks = self.get_tracks((distance + 6.5) * (self.zoom))  # 对位移的缩放计算
+        self.crack_slider(tracks)
+        sleep(1)
+        self.fail_refresh_success_general_general_review_login()
+
+    def fail_refresh_success_general_general_review_login(self):
+        flag = self.isElementExist(self.fail_fresh)
+        if flag:
+            print("失败刷新页面！")
+            self.get_driver().refresh()
+            self.slide_verification_general_review_login()
+        else:
+            self.find_element(*self.loc_button).click()
+            sleep(1)
+
     # 总监确认权限登录
-    def login_director_to_confirm(self):
+    def login_director_to_confirm_login(self):
         datas = ExcelReader(self.excel).data
         for d in datas:
             self.element(d['director_to_confirm'], d['password'])
             self.implicitly_wait_time()
             self.wait_time()
+
+    def slide_verification_director_to_confirm_login(self):
+        self.login_director_to_confirm_login()
+        target = 'target.jpg'
+        template = 'template.png'
+        self.get_pic()
+        distance = self.match(target, template)
+        tracks = self.get_tracks((distance + 6.5) * (self.zoom))  # 对位移的缩放计算
+        self.crack_slider(tracks)
+        sleep(1)
+        self.fail_refresh_success_general_director_to_login()
+
+    def fail_refresh_success_general_director_to_login(self):
+        flag = self.isElementExist(self.fail_fresh)
+        if flag:
+            print("失败刷新页面！")
+            self.get_driver().refresh()
+            self.slide_verification_director_to_confirm_login()
+        else:
+            self.find_element(*self.loc_button).click()
+            sleep(1)
 
     # 新增水工单
     loc_increat = (By.XPATH, "//div[@class='phone-box']//button[.='新增']")
@@ -225,8 +306,8 @@ class WaterMainPage(Page):
     loc_service_time = (By.XPATH, "//div[@class='el-dialog__body']/form/div[2]/div/div/input")  # 预约时间
     loc_data_time = (By.XPATH, "//table[@class='el-date-table']/tbody/tr[6]/td[5]/div/span")  # 选择时间
     loc_Appointments = (By.XPATH, "//input[@placeholder='请填写预约人']")  # 预约人
-    loc_Appointments_telephone = (By.XPATH, "//input[placeholder='请填写预约人电话']")  # 预约人电话
-    loc_human_type = (By.XPATH, "//input[@placeholder='请选择预约人类型']")  # 预约人类型
+    loc_Appointments_telephone = (By.XPATH, "//div[@class='el-dialog__body']/form/div[4]/div/div/input")  # 预约人电话
+    loc_human_type = (By.XPATH, "//div[@class='el-dialog__body']/form/div[5]/div/div/div[1]/input")  # 预约人类型
     loc_human_type_owner = (By.XPATH, "//div[4]/div[1]/div[1]/ul/li[1]")  # 业主
     loc_human_type_plumber = (By.XPATH, "//div[4]/div[1]/div[1]/ul/li[2]")  # 水电工
     loc_human_type_section = (By.XPATH, "//div[4]/div[1]/div[1]/ul/li[3]")  # 工长
@@ -236,16 +317,21 @@ class WaterMainPage(Page):
     loc_human_type_organization = (By.XPATH, "//div[4]/div[1]/div[1]/ul/li[7]")  # 机构
     loc_human_type_other = (By.XPATH, "//div[4]/div[1]/div[1]/ul/li[8]")  # 其他
     loc_Residential_address = (By.CSS_SELECTOR, "span.el-cascader__label")  # 小区地址
-    loc_province = (By.XPATH, "//div[5]/ul/li[1]/span")  # 北京市
-    loc_city = (By.XPATH, "//div[5]/ul[2]/li[1]/span")  # 北京市
-    loc_district = (By.XPATH, "//div[5]/ul[3]/li[1]")  # 东城区
+    loc_province = (By.XPATH, "//div[5]/ul/li[1]/span")  # 北京市一级
+    loc_city = (By.XPATH, "//div[5]/ul[2]/li[1]/span")  # 北京市二级
+    loc_district = (By.XPATH, "//div[5]/ul[3]/li[1]/span")  # 东城区三级
     loc_detailed_address = (By.XPATH, "//input[@placeholder='请填写详细地址']")  # 详细地址
+    loc_zxhs = (By.XPATH, "//div[@class='el-dialog__body']/form/div[10]/div/div[1]/input")  # 几幢
+    loc_unit = (By.XPATH, "//div[@class='el-dialog__body']/form/div[10]/div/div[2]/input")  # 几单元
+    loc_room = (By.XPATH, "//div[@class='el-dialog__body']/form/div[10]/div/div[3]/input")  # 几室
     loc_choose_org = (By.XPATH, "//div[@class='el-dialog__body']/form/div[11]/div/div/div/input")  # 选择机构
-    loc_choose_org_NO1 = (By.XPATH, "//div[6]/div[1]/div[1]/ul/li")  # 选择第一个机构
+
+    loc_choose_org_NO1 = (By.XPATH, "//div[6]/div[1]/div[1]/ul/li/span")  # 选择第一个机构
     loc_note = (By.XPATH, "textarea.el-textarea__inner")  # 备注
     loc_submit_button = (By.XPATH, "//div[@class='phone-box']//button[.='提 交']")  # 确定提交
 
     water_service_code = random_match()  # 随机服务码
+
     water_real_code = water_service_code
 
     # 新增订单
@@ -259,6 +345,7 @@ class WaterMainPage(Page):
         self.wait_time()
         self.find_element(*self.loc_data_time).click()
         self.find_element(*self.loc_Appointments).send_keys(random_name())
+        self.wait_time()
         self.find_element(*self.loc_Appointments_telephone).send_keys('15067126937')
         self.wait_time()
         self.find_element(*self.loc_human_type).click()
@@ -276,6 +363,9 @@ class WaterMainPage(Page):
         self.find_element(*self.loc_district).click()
         self.wait_time()
         self.find_element(*self.loc_detailed_address).send_keys(random_address())
+        self.find_element(*self.loc_zxhs).send_keys('3')
+        self.find_element(*self.loc_unit).send_keys('4')
+        self.find_element(*self.loc_room).send_keys('5')
         self.find_element(*self.loc_choose_org).click()
         self.find_element(*self.loc_choose_org_NO1).click()
         self.wait_time()
@@ -397,10 +487,10 @@ class WaterMainPage(Page):
         # if self.find_element(*self.work_service_code_exist) == self.water_service_code:
         #     self.find_element()
 
-    # 1.补贴申请，流程 (拥有全部权限all)市场部审核
+    # 1.补贴申请，流程 (只拥有市场部权限)市场部审核
     subsidy_service_code_texts = []  # 空列表
-    subsidy_wealth_management = (By.XPATH, "//*[@id='app']/div/section/section/aside/div/ul/div[3]/li/div/div")  # 财富管理
-    subsidy_audit = (By.XPATH, "//*[@id='app']/div/section/section/aside/div/ul/div[3]/li/ul/li[10]")  # 补贴审核
+    subsidy_wealth_management = (By.XPATH, "//div[@class='left-box']//span[.='资金管理']")  # 资金管理
+    subsidy_audit = (By.XPATH, "//div[@class='left-box']/div/div[1]/div/ul/div[3]/li/ul/li")  # 补贴审核
     subsidy_service_code_elements = (By.XPATH, "//div[@class='el-table__header-wrapper']//div[@class='cell']")  # 服务卡号列表
     subsidy_agree_button = (By.XPATH, "//div[@class='el-table__fixed-body-wrapper']//span[.='同意']")  # 同意补贴申请(列表第一列同意）
     subsidy_agree_window = (
@@ -411,29 +501,32 @@ class WaterMainPage(Page):
 
     # 补贴审核——同意,待审核通过后在已审核列表比对
     def subsidy_operation(self):
-        self.wait_time()
-        self.find_element(*self.subsidy_wealth_management).click()
-        self.wait_time()
-        self.find_element(*self.subsidy_audit).click()
+        # self.wait_time()
+        # self.find_element(*self.subsidy_wealth_management).click()
+        # self.wait_time()
+        # self.find_element(*self.subsidy_audit).click()
         self.wait_time()
         subsidy_service_codes_elements = self.find_elements(*self.subsidy_service_code_elements)
         for subsidy_service_codes_element in subsidy_service_codes_elements:
             self.subsidy_service_code_texts.append(subsidy_service_codes_element)
         subsidy_code_card = self.subsidy_service_code_texts[5]  # 服务卡号
         print(subsidy_code_card)
+        print("已生成服务卡号")
         subsidy_service_number = self.subsidy_service_code_texts.index(subsidy_code_card)
         subsidy_service_code_location = int((subsidy_service_number + 1) / 22) + 1  # 定位列表的行数
         # 列表同意的位置
         if subsidy_service_number <= 22:
             subsidy_service_code_real_location = (By.XPATH,
-                                                  "//div[1]/div/section/section/section/main/div[3]/div/div[4]/div/div/div[1]/div[4]/div[2]/"
-                                                  "table/tbody/tr/td[22]/div/div/span[1]")
+                                                  "//div[1]/div/section/section/section/div[2]/div[1]/div/main/div[3]/"
+                                                  "div/div[4]/div/div/div[1]/div[4]/div[2]/table/tbody/tr[1]/td[22]/div/div/span[1]")
             self.find_element(*subsidy_service_code_real_location).click()
         else:
             subsidy_service_code_real_location = (By.XPATH,
-                                                  "//div[1]/div/section/section/section/main/div[3]/div/div[4]/div/div/div[1]/div[4]/div[2]/table/tbody/tr[" + str(
+                                                  "//div[1]/div/section/section/section/div[2]/div[1]/div/main/div[3]/"
+                                                  "div/div[4]/div/div/div[1]/div[4]/div[2]/table/tbody/tr[" + str(
                                                       subsidy_service_code_location) + "]/td[22]/div/div/span[1]")
             self.find_element(*subsidy_service_code_real_location).click()
+
         self.find_element(*self.subsidy_agree_window).click()
         self.wait_time()
         self.find_element(*self.subsidy_to_audit).click()  # 进入已审核列表
@@ -441,22 +534,35 @@ class WaterMainPage(Page):
         subsidy_service_audit_codes_elements = self.find_elements(*self.subsidy_service_code_elements)
         for subsidy_service_audit_code in subsidy_service_audit_codes_elements:
             self.subsidy_service_audit_codes_elements_texts.append(subsidy_service_audit_code)
-        try:
-            self.assertIn(subsidy_code_card, self.subsidy_service_audit_codes_elements_texts,
-                          "服务卡号为%s 的补贴申请同意!" % subsidy_code_card)
-        except Exception as e:
-            print(format(e))
+
+        return subsidy_code_card, self.subsidy_service_audit_codes_elements_texts
+
+    service_code, service_code_without = subsidy_operation()
 
     department_to_audit_codes_element_text = []
     department_to_audit_elements = (By.XPATH, "//div[@class='mt-20']//div[@class='cell']")  # 列表数据
 
-    # 2.全部权限综合科初审
+    # 2.综合科初审
     def department_to_audit(self):
+        # self.wait_time()
+        # self.find_element(*self.subsidy_wealth_management).click()
+        # self.wait_time()
+        # self.find_element(*self.subsidy_audit).click()
         self.wait_time()
-        self.find_element(*self.subsidy_wealth_management).click()
-        self.wait_time()
-        self.find_element(*self.subsidy_audit).click()
-        self.wait_time()
-        department_to_audit_codes_elements = self.find_element(*self.department_to_audit_elements)
+        department_to_audit_codes_elements = self.find_elements(*self.department_to_audit_elements)
         for department_to_audit_element in department_to_audit_codes_elements:
             self.department_to_audit_codes_element_text.append(department_to_audit_element)
+        subsidy_service_number = self.subsidy_service_code_texts.index(self.service_code)
+        subsidy_service_code_location = int((subsidy_service_number + 1) / 22) + 1  # 定位列表的行数
+        # 列表同意的位置
+        if subsidy_service_number <= 22:
+            subsidy_service_code_real_location = (By.XPATH,
+                                                  "//div[1]/div/section/section/section/div[2]/div[1]/div/main/div[3]/"
+                                                  "div/div[4]/div/div/div[1]/div[4]/div[2]/table/tbody/tr[1]/td[22]/div/div/span[1]")
+            self.find_element(*subsidy_service_code_real_location).click()
+        else:
+            subsidy_service_code_real_location = (By.XPATH,
+                                                  "//div[1]/div/section/section/section/div[2]/div[1]/div/main/div[3]/"
+                                                  "div/div[4]/div/div/div[1]/div[4]/div[2]/table/tbody/tr[" + str(
+                                                      subsidy_service_code_location) + "]/td[22]/div/div/span[1]")
+            self.find_element(*subsidy_service_code_real_location).click()
