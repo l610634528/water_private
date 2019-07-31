@@ -24,14 +24,19 @@ from time import sleep
 
 class TestWater(unittest.TestCase):
     URL = Config().get('URL')
-
+    department_service_audit_codes_elements_texts = []
 
     def setUp(self):
         self.driver = WaterMainPage(browser_type='chrome').get(self.URL, maximize_window=True)
 
-    def test_subsidy_audit(self):
-        self.driver.login_general_audit()
-
+    def test_general_audit(self):
+        self.driver.slide_verification_general_login()
+        department_code_card, self.department_service_audit_codes_elements_texts = self.driver.department_to_audit()  # 市场部同意
+        try:
+            self.assertIn(department_code_card, self.department_service_audit_codes_elements_texts,
+                          "服务卡号为%s 的补贴申请同意!" % department_code_card)
+        except Exception as e:
+            print(format(e))
 
     def tearDown(self):
         self.driver.quit()

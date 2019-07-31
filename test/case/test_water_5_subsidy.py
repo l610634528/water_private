@@ -26,20 +26,33 @@ class TestWater(unittest.TestCase):
     URL = Config().get('URL')
     subsidy_service_audit_codes_elements_texts = []
 
-    def setUp(self):
-        self.driver = WaterMainPage(browser_type='chrome').get(self.URL, maximize_window=True)
+    @classmethod
+    def setUpClass(cls):
+        cls.driver = WaterMainPage(browser_type='chrome').get(cls.URL, maximize_window=True)
 
-    def test_subsidy_audit(self):
-        self.driver.slide_verification_marketing_login()  # 市场部登录
+    def test_01_subsidy_audit(self):
+        self.driver.slide_verification_marketing_login_all()  # 市场部登录
         subsidy_code_card, self.subsidy_service_audit_codes_elements_texts = self.driver.subsidy_operation()  # 市场部同意
         try:
             self.assertIn(subsidy_code_card, self.subsidy_service_audit_codes_elements_texts,
                           "服务卡号为%s 的补贴申请同意!" % subsidy_code_card)
         except Exception as e:
             print(format(e))
+        sleep(3)
 
-    def tearDown(self):
-        self.driver.quit()
+    def test_02_general_audit(self):
+
+        department_code_card, self.department_service_audit_codes_elements_texts = self.driver.department_to_audit()  # 市场部同意
+        try:
+            self.assertIn(department_code_card, self.department_service_audit_codes_elements_texts,
+                          "服务卡号为%s 的补贴申请同意!" % department_code_card)
+        except Exception as e:
+            print(format(e))
+            sleep(3)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
 
 
 if __name__ == '__main__':

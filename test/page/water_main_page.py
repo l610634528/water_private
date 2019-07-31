@@ -192,7 +192,7 @@ class WaterMainPage(Page):
             self.implicitly_wait_time()
             self.wait_time()
 
-    def slide_verification_marketing_login(self):
+    def slide_verification_marketing_login_all(self):
         self.login_marketing_account()
         target = 'target.jpg'
         template = 'template.png'
@@ -208,7 +208,7 @@ class WaterMainPage(Page):
         if flag:
             print("失败刷新页面！")
             self.get_driver().refresh()
-            self.slide_verification_marketing_login()
+            self.slide_verification_marketing_login_all()
         else:
             self.find_element(*self.loc_button).click()
             sleep(1)
@@ -492,14 +492,14 @@ class WaterMainPage(Page):
     subsidy_wealth_management = (By.XPATH, "//div[@class='left-box']//span[.='资金管理']")  # 资金管理
     subsidy_audit = (By.XPATH, "//div[@class='left-box']/div/div[1]/div/ul/div[3]/li/ul/li")  # 补贴审核
     subsidy_service_code_elements = (By.XPATH, "//div[@class='el-table__header-wrapper']//div[@class='cell']")  # 服务卡号列表
-    subsidy_agree_button = (By.XPATH, "//div[@class='el-table__fixed-body-wrapper']//span[.='同意']")  # 同意补贴申请(列表第一列同意）
+    subsidy_agree_button = (By.XPATH, "//div[@class='subsidyAudit']//button[.='同意']")  # 同意补贴申请(列表第一列同意）
     subsidy_agree_window = (
         By.XPATH, "//div[@class='el-message-box__btns']//button[normalize-space(.)='确定']")  # 列表同意后，窗口同意确认
     subsidy_to_audit = (By.XPATH, "//div[@class='personnel-box']//a[.='已审核']")  # 已审核列表
     subsidy_service_audit_code_elements = (By.XPATH, "//thead[@class='has-gutter']//div[@class='cell']")  # 列表数据
     subsidy_service_audit_codes_elements_texts = []
 
-    # 补贴审核——同意,待审核通过后在已审核列表比对
+    # 补贴审核——已经没有同意，只有审核，改一下
     def subsidy_operation(self):
         # self.wait_time()
         # self.find_element(*self.subsidy_wealth_management).click()
@@ -509,25 +509,28 @@ class WaterMainPage(Page):
         subsidy_service_codes_elements = self.find_elements(*self.subsidy_service_code_elements)
         for subsidy_service_codes_element in subsidy_service_codes_elements:
             self.subsidy_service_code_texts.append(subsidy_service_codes_element)
-        subsidy_code_card = self.subsidy_service_code_texts[5]  # 服务卡号
+        subsidy_code_card = self.subsidy_service_code_texts[3]  # 服务卡号
         print(subsidy_code_card)
         print("已生成服务卡号")
         subsidy_service_number = self.subsidy_service_code_texts.index(subsidy_code_card)
-        subsidy_service_code_location = int((subsidy_service_number + 1) / 22) + 1  # 定位列表的行数
+        subsidy_service_code_location = int((subsidy_service_number + 1) / 18) + 1  # 定位列表的行数
         # 列表同意的位置
-        if subsidy_service_number <= 22:
+        if subsidy_service_number <= 18:
             subsidy_service_code_real_location = (By.XPATH,
-                                                  "//div[1]/div/section/section/section/div[2]/div[1]/div/main/div[3]/"
-                                                  "div/div[4]/div/div/div[1]/div[4]/div[2]/table/tbody/tr[1]/td[22]/div/div/span[1]")
+                                                  "//*[@id='app']/div/section/section/section/div[2]/div[1]/div/main/"
+                                                  "div[3]/div/div[4]/div/div/div[1]/div[3]/table/tbody/tr[1]/td[18]/div/div/span")
             self.find_element(*subsidy_service_code_real_location).click()
+            self.wait_time()
         else:
             subsidy_service_code_real_location = (By.XPATH,
-                                                  "//div[1]/div/section/section/section/div[2]/div[1]/div/main/div[3]/"
-                                                  "div/div[4]/div/div/div[1]/div[4]/div[2]/table/tbody/tr[" + str(
-                                                      subsidy_service_code_location) + "]/td[22]/div/div/span[1]")
+                                                  "//*[@id='app']/div/section/section/section/div[2]/div[1]/div/main/"
+                                                  "div[3]/div/div[4]/div/div/div[1]/div[3]/table/tbody/tr[" + str(
+                                                      subsidy_service_code_location) + "]/td[18]/div/div/span")
             self.find_element(*subsidy_service_code_real_location).click()
-
-        self.find_element(*self.subsidy_agree_window).click()
+            self.wait_time()
+        self.find_element(*self.subsidy_agree_button).click()  # 页面同意按键
+        self.wait_time()
+        self.find_element(*self.subsidy_agree_window).click()  # 页面确定按键
         self.wait_time()
         self.find_element(*self.subsidy_to_audit).click()  # 进入已审核列表
         self.wait_time()
@@ -537,32 +540,49 @@ class WaterMainPage(Page):
 
         return subsidy_code_card, self.subsidy_service_audit_codes_elements_texts
 
-    service_code, service_code_without = subsidy_operation()
-
-    department_to_audit_codes_element_text = []
+    department_to_audit_codes_element_texts = []
     department_to_audit_elements = (By.XPATH, "//div[@class='mt-20']//div[@class='cell']")  # 列表数据
+    to_audit = (By.XPATH, "//div[@class='personnel-box']//a[.='待审核']")
 
-    # 2.综合科初审
+    # 2.综合科初审  已经没有同意，只有审核，改一下
     def department_to_audit(self):
         # self.wait_time()
         # self.find_element(*self.subsidy_wealth_management).click()
         # self.wait_time()
         # self.find_element(*self.subsidy_audit).click()
         self.wait_time()
+        self.find_element(*self.to_audit)
+        self.wait_time()
+        # 市场部审核取的服务卡号
+        service_code, service_code_without = self.subsidy_operation()
+
         department_to_audit_codes_elements = self.find_elements(*self.department_to_audit_elements)
         for department_to_audit_element in department_to_audit_codes_elements:
             self.department_to_audit_codes_element_text.append(department_to_audit_element)
-        subsidy_service_number = self.subsidy_service_code_texts.index(self.service_code)
-        subsidy_service_code_location = int((subsidy_service_number + 1) / 22) + 1  # 定位列表的行数
-        # 列表同意的位置
-        if subsidy_service_number <= 22:
+            self.department_to_audit_codes_element_text.append(department_to_audit_element)
+        department_service_number = self.subsidy_service_code_texts.index(service_code)
+        department_service_code_location = int((department_service_number + 1) / 18) + 1  # 定位列表的行数
+        # 列表审核位置
+        if department_service_number <= 18:
             subsidy_service_code_real_location = (By.XPATH,
-                                                  "//div[1]/div/section/section/section/div[2]/div[1]/div/main/div[3]/"
-                                                  "div/div[4]/div/div/div[1]/div[4]/div[2]/table/tbody/tr[1]/td[22]/div/div/span[1]")
+                                                  "//*[@id='app']/div/section/section/section/div[2]/div[1]/div/main/"
+                                                  "div[3]/div/div[4]/div/div/div[1]/div[3]/table/tbody/tr[1]/td[18]/div/div/span")
             self.find_element(*subsidy_service_code_real_location).click()
+            self.wait_time()
         else:
             subsidy_service_code_real_location = (By.XPATH,
-                                                  "//div[1]/div/section/section/section/div[2]/div[1]/div/main/div[3]/"
-                                                  "div/div[4]/div/div/div[1]/div[4]/div[2]/table/tbody/tr[" + str(
-                                                      subsidy_service_code_location) + "]/td[22]/div/div/span[1]")
+                                                  "//*[@id='app']/div/section/section/section/div[2]/div[1]/div/main/"
+                                                  "div[3]/div/div[4]/div/div/div[1]/div[3]/table/tbody/tr[" + str(
+                                                      department_service_code_location) + "]/td[18]/div/div/span")
             self.find_element(*subsidy_service_code_real_location).click()
+            self.wait_time()
+        self.find_element(*self.subsidy_agree_button).click()  # 页面同意按键
+        self.wait_time()
+        self.find_element(*self.subsidy_agree_window).click()  # 页面确定按键
+        self.wait_time()
+        self.find_element(*self.subsidy_to_audit).click()  # 进入已审核列表
+        self.wait_time()
+        department_service_audit_codes_elements = self.find_elements(*self.department_to_audit_elements)
+        for department_service_audit_codes_element in department_service_audit_codes_elements:
+            self.department_to_audit_codes_element_texts.append(department_service_audit_codes_element)
+        return service_code, self.department_to_audit_codes_element_texts
