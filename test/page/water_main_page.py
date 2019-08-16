@@ -300,7 +300,7 @@ class WaterMainPage(Page):
             self.find_element(*self.loc_button).click()
             sleep(1)
 
-    # 新增水工单
+    """-----------新增水工订单------------"""
     loc_increat = (By.XPATH, "//div[@class='phone-box']//button[.='新增']")
     # loc_service_code = (By.XPATH, "//div[@class='el-dialog__body']/form/div[2]/div/div/input")  # 服务码
     loc_service_time = (By.XPATH, "//div[@class='el-dialog__body']/form/div[2]/div/div/input")  # 预约时间
@@ -327,12 +327,15 @@ class WaterMainPage(Page):
     loc_choose_org = (By.XPATH, "//div[@class='el-dialog__body']/form/div[11]/div/div/div/input")  # 选择机构
 
     loc_choose_org_NO1 = (By.XPATH, "//div[6]/div[1]/div[1]/ul/li/span")  # 选择第一个机构
+    loc_pipeline = (By.XPATH, "//div[@class='el-radio-group']/label[2]/span[1]")  # 管道回填
     loc_note = (By.XPATH, "textarea.el-textarea__inner")  # 备注
     loc_submit_button = (By.XPATH, "//div[@class='phone-box']//button[.='提 交']")  # 确定提交
 
     water_service_code = random_match()  # 随机服务码
 
     water_real_code = water_service_code
+    water_booking_people_phone = random_phone_number()
+    people_name = random_name()
 
     # 新增订单
     def increat_order(self):
@@ -344,9 +347,10 @@ class WaterMainPage(Page):
         self.find_element(*self.loc_service_time).click()
         self.wait_time()
         self.find_element(*self.loc_data_time).click()
-        self.find_element(*self.loc_Appointments).send_keys(random_name())
+        self.find_element(*self.loc_Appointments).send_keys(self.people_name)
+
         self.wait_time()
-        self.find_element(*self.loc_Appointments_telephone).send_keys('15067126937')
+        self.find_element(*self.loc_Appointments_telephone).send_keys(self.water_booking_people_phone)
         self.wait_time()
         self.find_element(*self.loc_human_type).click()
         self.find_element(*self.loc_human_type_owner).click()
@@ -369,8 +373,11 @@ class WaterMainPage(Page):
         self.find_element(*self.loc_choose_org).click()
         self.find_element(*self.loc_choose_org_NO1).click()
         self.wait_time()
+        self.find_element(*self.loc_pipeline).click()
+        self.wait_time()
         self.find_element(*self.loc_submit_button).click()
-        self.wait_time(6)
+        self.wait_time(5)
+        return self.water_booking_people_phone
 
     system = (By.XPATH, "//div[@class='left-box']//span[.='系统设置']")  # 系统设置
     organ_manage = (By.XPATH, "//div[@class='left-box']/ul/div[6]/li/ul/li[1]")  # 机构管理

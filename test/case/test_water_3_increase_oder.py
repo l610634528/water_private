@@ -14,32 +14,119 @@ from selenium.webdriver.common.by import By
 import unittest
 from selenium import webdriver
 from test.common.page import Page
-from utils.config import Config
+from utils.config import Config, REPORT_PATH
 from test.page.water_main_page import WaterMainPage
+import time
+from HTMLTestRunner import HTMLTestRunner
 
 
 class TestWater(unittest.TestCase):
     URL = Config().get('URL')
 
-    def setUp(self):
-        self.driver = WaterMainPage(browser_type='chrome').get(self.URL, maximize_window=True)
+    @classmethod
+    def setUpClass(cls):
+        cls.driver = WaterMainPage(browser_type='chrome').get(cls.URL, maximize_window=True)
 
-    def tearDown(self):
-        self.driver.quit()
+    @classmethod
+    def tearDownClass(cls):
+        cls.driver.quit()
 
-    def test_2_increat_order(self):
+    def test_1_increat_order(self):
         self.driver.slide_verification_login()
         self.driver.increat_order()
-        element_service_code = self.driver.find_element(By.XPATH,
-                                                        "//div[1]/div/section/section/section/main/div[3]/div/div[2]/div[1]/div[3]/table/tbody/tr[1]/td[5]/div").text
-        print(element_service_code)
+        people_phone_1 = self.driver.water_booking_people_phone
+        people_name = self.driver.people_name
+        element_people_phone = self.driver.find_element(By.XPATH,
+                                                        "//div/div/section/section/section/div[2]/div[1]/div/main/div[3]/div/div[2]/div[1]/div[3]/table/tbody/tr[1]/td[7]/div").text
+        print(element_people_phone)
+        print(people_name)
 
         # 断言判断是否新增成功
         try:
-            self.assertEqual(self.driver.water_service_code, element_service_code, "新增订单失败！")
+            self.assertEqual(people_phone_1, element_people_phone, "新增订单成功！")
+            print("新增订单成功！")
         except Exception as e:
             print('Assertion test fail.', format(e))
 
+    # 验证预约人电话
+    def test_2_search_phone(self):
+        people_phone_2 = self.driver.water_booking_people_phone
+        self.driver.find_element(By.XPATH, "//input[@placeholder='预约人/预约人电话']").send_keys(people_phone_2)
+        time.sleep(2)
+        self.driver.find_element(By.XPATH, "//div[@class='search-form_button']//button[.='查询']").click()
+        time.sleep(2)
+        element_people_phone_2 = self.driver.find_element(By.XPATH,
+                                                          "//div/div/section/section/section/div[2]/div[1]/div/main/div[3]/div/div[2]/div[1]/div[3]/table/tbody/tr[1]/td[7]/div").text
+        print(element_people_phone_2)
+
+        # 断言判断是否查询成功
+        try:
+            self.assertEqual(people_phone_2, element_people_phone_2, "查询预约人电话成功！")
+            print("查新预约人电话成功！")
+        except Exception as e:
+            print('Assertion test fail.', format(e))
+
+    # 验证预约人姓名
+    def test_3_search_name(self):
+        self.driver.driver_refresh()
+        booking_people_name = self.driver.people_name
+        self.driver.find_element(By.XPATH, "//input[@placeholder='预约人/预约人电话']").send_keys(booking_people_name)
+        time.sleep(2)
+        self.driver.find_element(By.XPATH, "//div[@class='search-form_button']//button[.='查询']").click()
+        time.sleep(2)
+        element_people_name = self.driver.find_element(By.XPATH,
+                                                       "//div/div/section/section/section/div[2]/div[1]/div/main/div[3]/div/div[2]/div[1]/div[3]/table/tbody/tr[1]/td[6]/div").text
+        print(element_people_name)
+
+        # 断言判断是否查询成功
+        try:
+            self.assertEqual(booking_people_name, element_people_name, "查询预约人姓名成功！")
+            print("查询预约人姓名成功！")
+        except Exception as e:
+            print('Assertion test fail.', format(e))
+
+    # 验证预约人类型
+    def test_4_search_type(self):
+        self.driver.driver_refresh()
+        people_type = "业主"
+        self.driver.find_element(By.XPATH, "//input[@placeholder='请选择预约人类型']").click()
+        time.sleep(2)
+        self.driver.find_element(By.XPATH, "/html/body/div[4]/div[1]/div[1]/ul/li[1]").click()
+        time.sleep(2)
+        self.driver.find_element(By.XPATH, "//div[@class='search-form_button']//button[.='查询']").click()
+        element_people_type = self.driver.find_element(By.XPATH,
+                                                       "//*[@id='app']/div/section/section/section/div[2]/div[1]/div/main/div[3]/div/div[2]/div[1]/div[3]/table/tbody/tr[1]/td[8]/div").text
+
+        print(element_people_type)
+
+        # 断言判断是否查询成功
+        try:
+            self.assertEqual(people_type, element_people_type, "查询预约人类型成功！")
+            print("查询预约人类型成功！")
+        except Exception as e:
+            print('Assertion test fail.', format(e))
+
+    # 验证订单状态
+    def test_5_search_order_type(self):
+        self.driver.driver_refresh()
+        order_type = "待处理"
+        self.driver.find_element(By.XPATH, "//input[@placeholder='状态']").click()
 
 if __name__ == '__main__':
-    unittest.main()
+    testunit = unittest.TestSuite()  # 定义一个单元测试容器
+    testunit.addTest(TestWater("test_1_increat_order"))  # 将测试用例加入到测试容器中
+    testunit.addTest(TestWater("test_2_search_phone"))
+    testunit.addTest(TestWater("test_3_search_name"))
+    testunit.addTest(TestWater("test_4_search_type"))
+    now = time.strftime('%Y-%m-%d_%H_%M', time.localtime(time.time()))
+    report_dir = REPORT_PATH + '\\%s.html' % now
+    re_open = open(report_dir, 'wb')
+    runner = HTMLTestRunner(
+        stream=re_open,
+        title='Report_title',
+        description='Report_description')
+    runner.run(testunit)  # 自动进行测试
+
+    # 注意，运行的时候，需要使用python
+    # run，不能以unittest运行，否则不能生成测试报告。 原因是
+    # pycharm的Run unittest会直接运行用例，不走下面的main函数。
