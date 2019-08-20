@@ -92,7 +92,7 @@ class TestWater(unittest.TestCase):
         self.driver.find_element(By.XPATH, "//input[@placeholder='请选择预约人类型']").click()
         time.sleep(2)
         self.driver.find_element(By.XPATH, "//div[3]/div[1]/div[1]/ul/li[1]").click()
-        time.sleep(2)
+        time.sleep(1)
         self.driver.find_element(By.XPATH, "//div[@class='search-form_button']//button[.='查询']").click()
         element_people_type = self.driver.find_element(By.XPATH,
                                                        "//*[@id='app']/div/section/section/section/div[2]/div[1]/div/main/div[3]/div/div[2]/div[1]/div[3]/table/tbody/tr[1]/td[8]/div").text
