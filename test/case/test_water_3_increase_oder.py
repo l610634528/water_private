@@ -91,7 +91,7 @@ class TestWater(unittest.TestCase):
         people_type = "业主"
         self.driver.find_element(By.XPATH, "//input[@placeholder='请选择预约人类型']").click()
         time.sleep(2)
-        self.driver.find_element(By.XPATH, "/html/body/div[4]/div[1]/div[1]/ul/li[1]").click()
+        self.driver.find_element(By.XPATH, "//div[3]/div[1]/div[1]/ul/li[1]").click()
         time.sleep(2)
         self.driver.find_element(By.XPATH, "//div[@class='search-form_button']//button[.='查询']").click()
         element_people_type = self.driver.find_element(By.XPATH,
@@ -111,6 +111,60 @@ class TestWater(unittest.TestCase):
         self.driver.driver_refresh()
         order_type = "待处理"
         self.driver.find_element(By.XPATH, "//input[@placeholder='状态']").click()
+        time.sleep(2)
+        self.driver.find_element(By.XPATH, "/html/body/div[2]/div[1]/div[1]/ul/li[1]").click()
+        time.sleep(2)
+        self.driver.find_element(By.XPATH, "//div[@class='search-form_button']//button[.='查询']").click()
+        element_order_type = self.driver.find_element(By.XPATH,
+                                                      "//*[@id='app']/div/section/section/section/div[2]/div[1]/div/main/div[3]/div/div[2]/div[1]/div[3]/table/tbody/tr[1]/td[15]/div/div").text
+        print(element_order_type)
+
+        # 断言判断是否查询成功
+        try:
+            self.assertEqual(order_type, element_order_type, "查询预约人类型成功！")
+            print("查询订单为待处理类型成功！")
+        except Exception as e:
+            print('Assertion test fail.', format(e))
+
+    # 验证业主姓名查询
+    def test_6_owner_name(self):
+        self.driver.driver_refresh()
+        owner_people_name = self.driver.people_name
+        self.driver.find_element(By.XPATH, "//input[@placeholder='业主姓名/业主电话']").send_keys(owner_people_name)
+        time.sleep(2)
+        self.driver.find_element(By.XPATH, "//div[@class='search-form_button']//button[.='查询']").click()
+        time.sleep(2)
+        element_people_name = self.driver.find_element(By.XPATH,
+                                                       "//*[@id='app']/div/section/section/section/div[2]/div[1]/div/main/div[3]/div/div[2]/div[1]/div[3]/table/tbody/tr/td[11]/div").text
+        print(element_people_name)
+
+        # 断言判断是否查询成功
+        try:
+            self.assertEqual(owner_people_name, element_people_name, "查询预约人姓名成功！")
+            print("查询预约人姓名成功！")
+        except Exception as e:
+            print('Assertion test fail.', format(e))
+
+    # 验证预约类型查询
+    def test_7_types_of_precontract(self):
+        self.driver.driver_refresh()
+        Types_of_precontract = '电话预约'
+        self.driver.find_element(By.XPATH, "//input[@placeholder='请选择预约类型']").click()
+        time.sleep(2)
+        self.driver.find_element(By.XPATH, "//div[4]/div[1]/div[1]/ul/li[1]").click()
+        time.sleep(1)
+        self.driver.find_element(By.XPATH, "//div[@class='search-form_button']//button[.='查询']").click()
+        time.sleep(2)
+        element_types_of_precontract = self.driver.find_element(By.XPATH,
+                                                                "//*[@id='app']/div/section/section/section/div[2]/div[1]/div/main/div[3]/div/div[2]/div[1]/div[3]/table/tbody/tr/td[3]/div").text
+        print(element_types_of_precontract)
+        # 断言判断是否查询成功
+        try:
+            self.assertEqual(Types_of_precontract, element_types_of_precontract, "查询预约人姓名成功！")
+            print("查询预约人姓名成功！")
+        except Exception as e:
+            print('Assertion test fail.', format(e))
+
 
 if __name__ == '__main__':
     testunit = unittest.TestSuite()  # 定义一个单元测试容器
