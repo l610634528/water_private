@@ -11,7 +11,10 @@ from selenium.webdriver.support import ui
 # from browser import Browser
 # from time import sleep
 """pycharm环境"""
-from test.common.browser import Browser
+import os
+import sys
+sys.path.append("F:\\test_FF_number2\\test\\common")
+from browser import Browser
 from time import sleep
 
 

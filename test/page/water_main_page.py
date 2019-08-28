@@ -10,10 +10,14 @@
 # from config import Config, DATA_PATH
 """pycharm环境"""
 from selenium.webdriver.common.by import By
-from test.common.page import Page
-from utils.file_reader import ExcelReader
-from utils.generator import *
-from utils.config import Config, DATA_PATH
+import os
+import sys
+sys.path.append("F:\\test_FF_number2\\test\\common")
+from page import Page
+sys.path.append("F:\\test_FF_number2\\utils")
+from file_reader import ExcelReader
+from generator import *
+from config import Config, DATA_PATH
 from selenium.webdriver.support import expected_conditions as EC
 
 from PIL import Image
@@ -185,13 +189,6 @@ class WaterMainPage(Page):
             self.wait_time()
 
     # 市场部权限登录
-    def login_marketing_account(self):
-        datas = ExcelReader(self.excel).data
-        for d in datas:
-            self.element(d['marketing_account'], d['password'])
-            self.implicitly_wait_time()
-            self.wait_time()
-
     def slide_verification_marketing_login_all(self):
         self.login_marketing_account()
         target = 'target.jpg'
@@ -202,6 +199,13 @@ class WaterMainPage(Page):
         self.crack_slider(tracks)
         sleep(1)
         self.fail_refresh_success_marketing_login()
+
+    def login_marketing_account(self):
+        datas = ExcelReader(self.excel).data
+        for d in datas:
+            self.element(d['marketing_account'], d['password'])
+            self.implicitly_wait_time()
+            self.wait_time()
 
     def fail_refresh_success_marketing_login(self):
         flag = self.isElementExist(self.fail_fresh)
@@ -214,13 +218,6 @@ class WaterMainPage(Page):
             sleep(1)
 
     # 综合科初审权限登录
-    def login_general_audit(self):
-        datas = ExcelReader(self.excel).data
-        for d in datas:
-            self.element(d['general_audit'], d['password'])
-            self.implicitly_wait_time()
-            self.wait_time()
-
     def slide_verification_general_login(self):
         self.login_general_audit()
         target = 'target.jpg'
@@ -231,6 +228,13 @@ class WaterMainPage(Page):
         self.crack_slider(tracks)
         sleep(1)
         self.fail_refresh_success_general_login()
+
+    def login_general_audit(self):
+        datas = ExcelReader(self.excel).data
+        for d in datas:
+            self.element(d['general_audit'], d['password'])
+            self.implicitly_wait_time()
+            self.wait_time()
 
     def fail_refresh_success_general_login(self):
         flag = self.isElementExist(self.fail_fresh)
@@ -243,12 +247,6 @@ class WaterMainPage(Page):
             sleep(1)
 
     # 综合科复审权限登录
-    def login_general_review_login(self):
-        datas = ExcelReader(self.excel).data
-        for d in datas:
-            self.element(d['general_review'], d['password'])
-            self.implicitly_wait_time()
-            self.wait_time()
 
     def slide_verification_general_review_login(self):
         self.login_general_review_login()
@@ -260,6 +258,13 @@ class WaterMainPage(Page):
         self.crack_slider(tracks)
         sleep(1)
         self.fail_refresh_success_general_general_review_login()
+
+    def login_general_review_login(self):
+        datas = ExcelReader(self.excel).data
+        for d in datas:
+            self.element(d['general_review'], d['password'])
+            self.implicitly_wait_time()
+            self.wait_time()
 
     def fail_refresh_success_general_general_review_login(self):
         flag = self.isElementExist(self.fail_fresh)

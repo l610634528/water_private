@@ -1,21 +1,17 @@
 """终端环境"""
-# import unittest
-# from selenium import webdriver
-# import sys
-# sys.path.append("..\\common")
-# from page import Page
-# sys.path.append("F:\\test_FF\\utils")
-# from config import Config
-# from water_main_page import WaterMainPage
-# from selenium.webdriver.common.by import By
+import os
+import sys
 
-"""pycharm环境"""
+
 from selenium.webdriver.common.by import By
 import unittest
 from selenium import webdriver
-from test.common.page import Page
-from utils.config import Config, REPORT_PATH
-from test.page.water_main_page import WaterMainPage
+# from test.common.page import Page
+sys.path.append("F:\\test_FF_number2\\utils")
+
+from config import Config, REPORT_PATH
+sys.path.append("F:\\test_FF_number2\\test\\page")
+from water_main_page import WaterMainPage
 import time
 from HTMLTestRunner import HTMLTestRunner
 
@@ -91,7 +87,7 @@ class TestWater(unittest.TestCase):
         people_type = "业主"
         self.driver.find_element(By.XPATH, "//input[@placeholder='请选择预约人类型']").click()
         time.sleep(2)
-        self.driver.find_element(By.XPATH, "//div[3]/div[1]/div[1]/ul/li[1]").click()
+        self.driver.find_element(By.XPATH, "/html/body/div[2]/div[1]/div[1]/ul/li[1]/span").click()
         time.sleep(1)
         self.driver.find_element(By.XPATH, "//div[@class='search-form_button']//button[.='查询']").click()
         element_people_type = self.driver.find_element(By.XPATH,
@@ -141,7 +137,7 @@ class TestWater(unittest.TestCase):
         # 断言判断是否查询成功
         try:
             self.assertEqual(owner_people_name, element_people_name, "查询预约人姓名成功！")
-            print("查询预约人姓名成功！")
+            print("查询业主姓名成功！")
         except Exception as e:
             print('Assertion test fail.', format(e))
 
@@ -151,7 +147,7 @@ class TestWater(unittest.TestCase):
         Types_of_precontract = '电话预约'
         self.driver.find_element(By.XPATH, "//input[@placeholder='请选择预约类型']").click()
         time.sleep(2)
-        self.driver.find_element(By.XPATH, "//div[4]/div[1]/div[1]/ul/li[1]").click()
+        self.driver.find_element(By.XPATH, "/html/body/div[2]/div[1]/div[1]/ul/li[1]/span").click()
         time.sleep(1)
         self.driver.find_element(By.XPATH, "//div[@class='search-form_button']//button[.='查询']").click()
         time.sleep(2)
@@ -161,17 +157,50 @@ class TestWater(unittest.TestCase):
         # 断言判断是否查询成功
         try:
             self.assertEqual(Types_of_precontract, element_types_of_precontract, "查询预约人姓名成功！")
-            print("查询预约人姓名成功！")
+            print("验证预约类型查询成功！")
+        except Exception as e:
+            print('Assertion test fail.', format(e))
+
+    # 验证省市区查询
+    def test_8_provinces(self):
+        self.driver.driver_refresh()
+        provinces_address = '北京市北京市东城区'
+        self.driver.find_element(By.XPATH, "//input[@placeholder='请选择省']").click()
+        time.sleep(1)
+        self.driver.find_element(By.XPATH, "/html/body/div[2]/div[1]/div[1]/ul/li[1]").click()
+        self.sleep(1)
+        self.driver.find_element(By.XPATH, "//input[@placeholder='请选择市']").click()
+        time.sleep(1)
+        self.driver.find_element(By.XPATH, "/html/body/div[3]/div[1]/div[1]/ul/li").click()
+        time.sleep(1)
+        self.driver.find_element(By.XPATH, "input[@placeholder='请选择区/县']").click()
+        time.sleep(1)
+        self.driver.find_element(By.XPATH, "/html/body/div[4]/div[1]/div[1]/ul/li[1]").click()
+        time.sleep(1)
+        self.driver.find_element(By.XPATH, "//div[@class='search-form_button']//button[.='查询']").click()
+        time.sleep(2)
+        element_provinces = self.driver.find_element(By.XPATH, "//*[@id="app"]/div/section/section/section/div[2]/div[1]/div/main/div[3]/div/div[2]/div[1]/div[3]/table/tbody/tr[1]/td[9]/div").text
+        element_provinces_list = element_provinces[0:9]
+        print(element_provinces)
+         # 断言判断是否查询成功
+        try:
+            self.assertEqual(provinces_address, element_provinces_list, "验证省市区查询成功！")
+            print("验证预约类型查询成功！")
         except Exception as e:
             print('Assertion test fail.', format(e))
 
 
 if __name__ == '__main__':
     testunit = unittest.TestSuite()  # 定义一个单元测试容器
-    testunit.addTest(TestWater("test_1_increat_order"))  # 将测试用例加入到测试容器中
-    testunit.addTest(TestWater("test_2_search_phone"))
-    testunit.addTest(TestWater("test_3_search_name"))
-    testunit.addTest(TestWater("test_4_search_type"))
+    testunit.addTest(TestWater('test_1_increat_order'))  # 将测试用例加入到测试容器中
+    testunit.addTest(TestWater('test_2_search_phone'))
+    testunit.addTest(TestWater('test_3_search_name'))
+    testunit.addTest(TestWater('test_4_search_type'))
+    testunit.addTest(TestWater('test_5_search_order_type'))
+    testunit.addTest(TestWater('test_6_owner_name'))
+    testunit.addTest(TestWater('test_7_types_of_precontract'))
+    testunit.addTest(TestWater('test_8_provinces'))
+
     now = time.strftime('%Y-%m-%d_%H_%M', time.localtime(time.time()))
     report_dir = REPORT_PATH + '\\%s.html' % now
     re_open = open(report_dir, 'wb')

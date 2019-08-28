@@ -18,15 +18,19 @@
 # sys.path.append("..\\page")
 # from water_main_page import WaterMainPage
 
-"""pychram环境"""
+"""终端环境"""
 import unittest
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from utils.log import logger
-from utils.config import Config, DRIVER_PATH, DATA_PATH, REPORT_PATH
-from utils.file_reader import ExcelReader
+import os
+import sys
+sys.path.append('F:\\test_FF\\utils')
+from log import logger
+from config import Config, DRIVER_PATH, DATA_PATH, REPORT_PATH
+from file_reader import ExcelReader
 from HTMLTestRunner import HTMLTestRunner
-from test.page.water_main_page import WaterMainPage
+sys.path.append("F:\\test_FF_number2\\test\\page")
+from water_main_page import WaterMainPage
 
 
 class TestWater(unittest.TestCase):

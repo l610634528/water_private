@@ -6,7 +6,7 @@
 # from file_reader import YamlReader
 """pycharm环境"""
 import os
-from utils.file_reader import YamlReader
+from file_reader import YamlReader
 
 description = '修改html报告'  # 测试报告需要的描述
 reporttitle = '从0搭建测试框架 测试'  # 测试报告需要的title
