@@ -24,7 +24,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import os
 import sys
-sys.path.append('F:\\test_FF\\utils')
+sys.path.append('F:\\test_FF_number2\\utils')
 from log import logger
 from config import Config, DRIVER_PATH, DATA_PATH, REPORT_PATH
 from file_reader import ExcelReader
@@ -44,6 +44,7 @@ class TestWater(unittest.TestCase):
 
     def test_water_login(self):
         self.driver.slide_verification_login()
+        
 
 
 if __name__ == '__main__':

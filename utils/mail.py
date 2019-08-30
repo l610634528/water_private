@@ -18,12 +18,15 @@ __author__ = 'lvxinjin'
 """pycharm环境"""
 import re
 import smtplib
+import os
+import sys
+sys.path.append("F:\\test_FF_number2\\utils")
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formataddr
 from socket import gaierror, error
-from utils.log import logger
-from utils.config import REPORT_PATH
+from log import logger
+from config import REPORT_PATH
 
 class Email:
     def __init__(self, server, sender, password, receiver, title, message=None, path=None):

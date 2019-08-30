@@ -13,7 +13,10 @@ logger.info('test log')
 import os
 import logging
 from logging.handlers import TimedRotatingFileHandler
-from utils.config import LOG_PATH, Config
+import os
+import sys
+sys.path.append("F:\\test_FF_number2\\utils")
+from config import LOG_PATH, Config
 
 class Logger(object):
     def __init__(self, logger_name='framework'):

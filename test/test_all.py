@@ -14,8 +14,11 @@
 # import time
 """pycharm"""
 from HTMLTestRunner import HTMLTestRunner
-from utils.config import description, reporttitle, REPORT_PATH, TEST_PATH
-from utils.mail import Email
+import os
+import sys
+sys.path.append("F:\\test_FF_number2\\utils")
+from config import description, reporttitle, REPORT_PATH, TEST_PATH
+from mail import Email
 import unittest
 import time
 
@@ -39,14 +42,14 @@ def create_report():
                             description=description)
     runner.run(test_suit)
     re_open.close()
-    e = Email(title='自动化测试报告',
-              message='',
-              receiver='lvxj@zhongcai.com',
-              server='smtp.163.com',
-              sender='l610634528@163.com',
-              password='lvxj64518881',
-              path=report_dir)
-    e.mail_send()
+    # e = Email(title='自动化测试报告',
+    #           message='',
+    #           receiver='lvxj@zhongcai.com',
+    #           server='smtp.163.com',
+    #           sender='l610634528@163.com',
+    #           password='lvxj64518881',
+    #           path=report_dir)
+    # e.mail_send()
 
 
 create_report()

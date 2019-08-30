@@ -11,11 +11,15 @@
 
 """pycharm环境"""
 import unittest
+import os
+import sys
 from selenium.webdriver.common.by import By
 from selenium import webdriver
-from test.common.page import Page
-from utils.config import Config
-from test.page.water_main_page import WaterMainPage
+sys.path.append("F:\\test_FF_number2\\test\\common")
+sys.path.append("F:\\test_FF_number2\\utils")
+from config import Config
+sys.path.append("F:\\test_FF_number2\\test\\page")
+from water_main_page import WaterMainPage
 
 class TestWater(unittest.TestCase):
     URL = Config().get('URL')

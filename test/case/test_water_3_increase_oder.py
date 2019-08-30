@@ -2,14 +2,15 @@
 import os
 import sys
 
-
 from selenium.webdriver.common.by import By
 import unittest
 from selenium import webdriver
+
 # from test.common.page import Page
 sys.path.append("F:\\test_FF_number2\\utils")
 
 from config import Config, REPORT_PATH
+
 sys.path.append("F:\\test_FF_number2\\test\\page")
 from water_main_page import WaterMainPage
 import time
@@ -168,7 +169,7 @@ class TestWater(unittest.TestCase):
         self.driver.find_element(By.XPATH, "//input[@placeholder='请选择省']").click()
         time.sleep(1)
         self.driver.find_element(By.XPATH, "/html/body/div[2]/div[1]/div[1]/ul/li[1]").click()
-        self.sleep(1)
+        time.sleep(1)
         self.driver.find_element(By.XPATH, "//input[@placeholder='请选择市']").click()
         time.sleep(1)
         self.driver.find_element(By.XPATH, "/html/body/div[3]/div[1]/div[1]/ul/li").click()
@@ -179,10 +180,11 @@ class TestWater(unittest.TestCase):
         time.sleep(1)
         self.driver.find_element(By.XPATH, "//div[@class='search-form_button']//button[.='查询']").click()
         time.sleep(2)
-        element_provinces = self.driver.find_element(By.XPATH, "//*[@id="app"]/div/section/section/section/div[2]/div[1]/div/main/div[3]/div/div[2]/div[1]/div[3]/table/tbody/tr[1]/td[9]/div").text
+        element_provinces = self.driver.find_element(By.XPATH,
+                                                     "//*[@id='app']/div/section/section/section/div[2]/div[1]/div/main/div[3]/div/div[2]/div[1]/div[3]/table/tbody/tr[1]/td[9]/div").text
         element_provinces_list = element_provinces[0:9]
         print(element_provinces)
-         # 断言判断是否查询成功
+        # 断言判断是否查询成功
         try:
             self.assertEqual(provinces_address, element_provinces_list, "验证省市区查询成功！")
             print("验证预约类型查询成功！")

@@ -13,6 +13,7 @@ from selenium.webdriver.common.by import By
 import os
 import sys
 sys.path.append("F:\\test_FF_number2\\test\\common")
+sys.path.append("F:\\test_FF_number2\\test\\page")
 from page import Page
 sys.path.append("F:\\test_FF_number2\\utils")
 from file_reader import ExcelReader
@@ -498,6 +499,30 @@ class WaterMainPage(Page):
         self.find_element(*self.work_service_human).click()
         # if self.find_element(*self.work_service_code_exist) == self.water_service_code:
         #     self.find_element()
+
+    '''————————————————————工单管理各种状态处理————————————————'''
+    work_order_management = (By.XPATH, "//*[@id='app']/div/section/section/aside/div/div/div[1]/div/ul/li[1]/ul/li[2]")
+    work_order_pending = (By.XPATH, "//*[@id='app']/div/section/section/section/div[2]/div[1]/div/main/div[3]/div/div[2]/ul/li[2]/a")
+    work_order_pending_ready = (By.XPATH, "//div[@class='el-table__fixed-body-wrapper']//span[.='派单']")
+    # 派单水工选择
+    order_worker_choosed = (By.XPATH, "//div[@class='el-radio-group']/label[1]/span[1]/span")
+    order_worker_true = (By.XPATH, "//div[@class='mt-20']//button[.='确 定']")
+    
+    def work_order_management_pending(self):
+        self.find_element(*self.work_order_management).click()
+        self.wait_time()
+        self.find_element(*self.work_order_pending).click()
+        self.wait_time()
+        self.find_element(*self.order_worker_choosed).click()
+        self.wait_time()
+        self.find_element(*self.order_worker_true).click()
+    
+    working_list = (By.XPATH, "//div[@class='nav-box']//a[.='待接单']")
+    
+    def working_list(self):
+        self.find_element(*self.working_list).click()
+
+
 
     """————————————————————市场部初审————————————————————"""
     # 1.补贴申请，流程 (只拥有市场部权限)市场部审核
