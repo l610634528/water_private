@@ -3,7 +3,7 @@
 # from selenium import webdriver
 # import sys
 # sys.path.append("..\\common")
-# from page import Page
+# from pagelv import Page
 # sys.path.append("F:\\test_FF\\utils")
 # from config import Config
 # from water_main_page import WaterMainPage
@@ -18,7 +18,7 @@ from selenium import webdriver
 sys.path.append("F:\\test_FF_number2\\test\\common")
 sys.path.append('F:\\test_FF_number2\\utils')
 from config import Config
-sys.path.append("F:\\test_FF_number2\\test\\page")
+sys.path.append("F:\\test_FF_number2\\test\\pagelv")
 from water_main_page import WaterMainPage
 
 

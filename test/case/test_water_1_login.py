@@ -14,8 +14,8 @@
 # from file_reader import ExcelReader
 # from HTMLTestRunner import HTMLTestRunner
 #
-# # sys.path.append("F:\\test_FF\\test\\page")
-# sys.path.append("..\\page")
+# # sys.path.append("F:\\test_FF\\test\\pagelv")
+# sys.path.append("..\\pagelv")
 # from water_main_page import WaterMainPage
 
 """终端环境"""
@@ -29,7 +29,7 @@ from log import logger
 from config import Config, DRIVER_PATH, DATA_PATH, REPORT_PATH
 from file_reader import ExcelReader
 from HTMLTestRunner import HTMLTestRunner
-sys.path.append("F:\\test_FF_number2\\test\\page")
+sys.path.append("F:\\test_FF_number2\\test\\pagelv")
 from water_main_page import WaterMainPage
 
 

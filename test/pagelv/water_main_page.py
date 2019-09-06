@@ -2,7 +2,7 @@
 # from selenium.webdriver.common.by import By
 # import sys
 # sys.path.append("..\\common")
-# from page import Page
+# from pagelv import Page
 # (..\\test_FF\\utils)
 # sys.path.append("F:\\test_FF\\utils")
 # from file_reader import ExcelReader
@@ -13,7 +13,6 @@ from selenium.webdriver.common.by import By
 import os
 import sys
 sys.path.append("F:\\test_FF_number2\\test\\common")
-sys.path.append("F:\\test_FF_number2\\test\\page")
 from page import Page
 sys.path.append("F:\\test_FF_number2\\utils")
 from file_reader import ExcelReader
@@ -518,9 +517,30 @@ class WaterMainPage(Page):
         self.find_element(*self.order_worker_true).click()
     
     working_list = (By.XPATH, "//div[@class='nav-box']//a[.='待接单']")
-    
     def working_list(self):
         self.find_element(*self.working_list).click()
+
+    # 转派订单
+    working_redeploy = (By.XPATH, "//div[@class='el-table__fixed-body-wrapper']//span[.='转派']")
+    # 转派地址
+    working_redeploy_address = (By.XPATH, "//span[@class='el-cascader__label']")
+    # 地址选择天津市-天津市-和平区
+    working_redeploy_choose_address = (By.XPATH, "//div[4]/ul[1]/li[2]/span")
+    working_choose_address_TJ = (By.XPATH, "//div[4]/ul[2]/li")
+    working_choose_address_peace = (By.XPATH, "//div[4]/ul[3]/li[1]")
+    # 转派机构-选择机构
+    Turn_sent_institutions = (By.XPATH, "//div[@class='el-dialog__body']/form/div[2]/div/div/div/input")
+    choose_institutions = (By.XPATH, "//div[5]/div[1]/div[1]/ul/li")
+    def wroking_redeploy(self):
+        self.find_element(*self.working_redeploy).click()
+        self.wait_time()
+        self.find_element(*self.working_redeploy_address).click()
+        self.wait_time()
+        self.find_element(*self.working_redeploy_choose_address).click()
+        self.wait_time()
+        self.find_element(*self.working_choose_address_TJ).click()
+        self.wait_time()
+        self.find_element(*self.working_choose_address_peace).click()
 
 
 

@@ -6,12 +6,12 @@ from selenium.webdriver.common.by import By
 import unittest
 from selenium import webdriver
 
-# from test.common.page import Page
+# from test.common.pagelv import Page
 sys.path.append("F:\\test_FF_number2\\utils")
 
 from config import Config, REPORT_PATH
 
-sys.path.append("F:\\test_FF_number2\\test\\page")
+sys.path.append("F:\\test_FF_number2\\test\\pagelv")
 from water_main_page import WaterMainPage
 import time
 from HTMLTestRunner import HTMLTestRunner
@@ -191,6 +191,46 @@ class TestWater(unittest.TestCase):
         except Exception as e:
             print('Assertion test fail.', format(e))
 
+    def test_9_pending(self):
+        self.driver.driver_refresh()
+        self.driver.work_order_management_pending()
+        people_phone_9 = self.driver.water_booking_people_phone
+        element_people_phone = self.driver.find_element(By.XPATH,
+                                                        "//div/div/section/section/section/div[2]/div[1]/div/main/div[3]/div/div[3]/div/div[1]/div[1]/div[3]/table/tbody/tr[1]/td[7]/div").text
+        print(element_people_phone)
+        sleep(2)
+        # 判断电话预约生成的订单在待派单中
+        try:
+            self.assertEqual(people_phone_9, element_people_phone, "电话预约生成的订单在待派单中！")
+            print("电话预约生成的订单在待派单中！")
+        except Exception as e:
+            print('Assertion test fail.', format(e))
+
+    # 工单管理——待接单
+    def test_10_order_waiting_list(self):
+        self.driver.driver_refresh()
+        self.driver.working_list()
+        people_phone_10 = self.driver.water_booking_people_phone
+        element_people_phone_10 = self.driver.find_element(By.XPATH,
+                                                          "//div/div/section/section/section/div[2]/div[1]/div/main/div[3]/div/div[3]/div/div[1]/div[1]/div[3]/table/tbody/tr[1]/td[7]/div").text
+        print(element_people_phone_10)
+        sleep(2)
+        # 判断待派单派出的订单在待接单中
+        try:
+            self.assertEqual(people_phone_10, element_people_phone_10, "待派单派出的订单在待接单中")
+            print("待派单派出的订单在待接单中")
+        except Exception as e:
+            print('Assertion test fail.', format(e))
+
+    # 工单管理——待接单——转派
+    def test_11_redeploy(self):
+        self.driver.driver_refresh()
+        self.driver.
+
+    # 工单管理——待接单——取消
+
+    # 工单管理——待接单——重新派单
+
 
 if __name__ == '__main__':
     testunit = unittest.TestSuite()  # 定义一个单元测试容器
@@ -202,6 +242,8 @@ if __name__ == '__main__':
     testunit.addTest(TestWater('test_6_owner_name'))
     testunit.addTest(TestWater('test_7_types_of_precontract'))
     testunit.addTest(TestWater('test_8_provinces'))
+    testunit.addTest(TestWater('test_9_pending'))
+    testunit.addTest(TestWater('test_10_order_waiting_list'))
 
     now = time.strftime('%Y-%m-%d_%H_%M', time.localtime(time.time()))
     report_dir = REPORT_PATH + '\\%s.html' % now
